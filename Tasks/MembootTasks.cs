@@ -19,7 +19,7 @@ namespace com.clusterrr.hakchi_gui.Tasks
     public class MembootTasks: Tasker.ITaskCollection
     {
         // Constants
-        public const int MembootWaitDelay = 120000;
+        public const int MembootWaitDelay = 600000;
 
         // Enums
         public enum MembootTaskType {
