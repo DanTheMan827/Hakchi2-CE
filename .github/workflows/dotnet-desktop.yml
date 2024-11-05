@@ -65,13 +65,13 @@ jobs:
           Copy-Item -Path "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*installer.exe" -Destination "${{ github.workspace }}\hakchi_gui\bin\installer" -Force
 
       - name: Upload Artifacts (Portable)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hakchi2-ce-${{ env.DISPLAY_VERSION }}-portable
           path: ${{ github.workspace }}\hakchi_gui\bin\Debug\net461\
 
       - name: Upload Artifacts (Installer)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: hakchi2-ce-${{ env.DISPLAY_VERSION }}-installer
           path: ${{ github.workspace }}\hakchi_gui\bin\installer\
