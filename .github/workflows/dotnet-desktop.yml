@@ -47,7 +47,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
         
       - name: Build solution
-        run: msbuild ${{ env.solution }} /p:Configuration=${{ env.buildConfiguration }} /p:Platform=${{ env.buildPlatform }}
+        run: msbuild "${{ env.solution }}" "/p:Configuration=${{ env.buildConfiguration }}" "/p:Platform=${{ env.buildPlatform }}"
 
       - name: Run Hakchi Version Script
         run: |
@@ -55,7 +55,6 @@ jobs:
           & $exePath --versionFormat "{0}" --versionFile "displayVersion.txt"
           $version = Get-Content -Path "displayVersion.txt" | Out-String
           Remove-Item -Path "displayVersion.txt"
-          # Append displayVersion to GITHUB_ENV
           Add-Content -Path $ENV:GITHUB_ENV -Value "displayVersion=$version"
 
       - name: Copy files to artifact directory
