@@ -43,6 +43,9 @@ jobs:
         env:
           GamesDBApiKey: ${{ secrets.GamesDBApiKey }}
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+        
       - name: Build solution
         run: msbuild ${{ env.solution }} /p:Configuration=${{ env.buildConfiguration }} /p:Platform=${{ env.buildPlatform }}
 
