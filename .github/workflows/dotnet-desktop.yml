@@ -28,10 +28,10 @@ jobs:
       - name: Install .NET Framework 4.6.1
         shell: powershell
         run: |
-          # Download the .NET Framework 4.6.1 installer
-          $url = "https://go.microsoft.com/fwlink/?linkid=845850"  # Link to .NET Framework 4.6.1 installer
-          $outputPath = "$env:TEMP\dotnet461-installer.exe"
-          Invoke-WebRequest -Uri $url -OutFile $outputPath
+          # Download the .NET Framework 4.6.2 installer
+          $url = "https://go.microsoft.com/fwlink/?linkid=2099466"
+          $outputPath = "$env:TEMP\dotnet462-installer.exe"
+          Invoke-WebRequest -Uri "$url" -OutFile "$outputPath"
           
           # Install silently
           Start-Process -FilePath $outputPath -ArgumentList "/quiet", "/norestart" -Wait
