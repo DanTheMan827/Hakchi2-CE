@@ -25,6 +25,28 @@ jobs:
         with:
           submodules: true
 
+      - name: Install .NET Framework 4.6.1
+        shell: powershell
+        run: |
+          # Download the .NET Framework 4.6.1 installer
+          $url = "https://go.microsoft.com/fwlink/?linkid=845850"  # Link to .NET Framework 4.6.1 installer
+          $outputPath = "$env:TEMP\dotnet461-installer.exe"
+          Invoke-WebRequest -Uri $url -OutFile $outputPath
+          
+          # Install silently
+          Start-Process -FilePath $outputPath -ArgumentList "/quiet", "/norestart" -Wait
+          
+          # Clean up the installer
+          Remove-Item -Path $outputPath
+
+      - name: Set up .NET Core SDK 3.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.0.x'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2
 
@@ -42,9 +64,6 @@ jobs:
           Set-Content -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Value $env:GamesDBApiKey
         env:
           GamesDBApiKey: ${{ secrets.GamesDBApiKey }}
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
         
       - name: Build solution
         run: msbuild "${{ env.solution }}" "/p:Configuration=${{ env.buildConfiguration }}" "/p:Platform=${{ env.buildPlatform }}"
