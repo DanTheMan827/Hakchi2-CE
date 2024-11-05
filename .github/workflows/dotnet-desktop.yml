@@ -76,10 +76,9 @@ jobs:
       - name: Run Hakchi Version Script
         run: |
           $exePath = "${{ github.workspace }}\hakchi_gui\bin\Debug\net461\hakchi.exe"
-          $versionPath = "${{ github.workspace }}\displayVersion.txt"
-          & $exePath --versionFormat "{0}" --versionFile "$versionPath"
-          $version = Get-Content -Path "$versionPath" | Out-String
-          Remove-Item -Path "$versionPath"
+          & $exePath --versionFormat "{0}" --versionFile "displayVersion.txt"
+          $version = Get-Content -Path "displayVersion.txt" | Out-String
+          Remove-Item -Path "displayVersion.txt"
           Add-Content -Path $ENV:GITHUB_ENV -Value "displayVersion=$version"
 
       - name: Copy files to artifact directory
@@ -105,7 +104,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          name: Hakchi2 CE v${{ env.DISPLAY_VERSION }}
+          name: Hakchi2 CE v${{ env.displayVersion }}
           draft: true
           prerelease: false
         env:
