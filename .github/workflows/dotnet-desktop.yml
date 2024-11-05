@@ -34,7 +34,7 @@ jobs:
       - name: Prepare GamesDB API Key File
         run: |
           New-Item -ItemType Directory -Path "${{ github.workspace }}\hakchi_gui\ApiKeys" -Force
-          New-Item -ItemType File -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Force | Out-Nul
+          New-Item -ItemType File -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Force
 
       - name: Write GamesDB API Key File
         continue-on-error: true
@@ -42,9 +42,6 @@ jobs:
           Set-Content -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Value $env:GamesDBApiKey
         env:
           GamesDBApiKey: ${{ secrets.GamesDBApiKey }}
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
 
       - name: Build solution
         run: msbuild ${{ env.solution }} /p:Configuration=${{ env.buildConfiguration }} /p:Platform=${{ env.buildPlatform }}
