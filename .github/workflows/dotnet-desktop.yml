@@ -71,9 +71,10 @@ jobs:
       - name: Run Hakchi Version Script
         run: |
           $exePath = "${{ github.workspace }}\hakchi_gui\bin\Debug\net461\hakchi.exe"
-          & $exePath --versionFormat "{0}" --versionFile "displayVersion.txt"
-          $version = Get-Content -Path "displayVersion.txt" | Out-String
-          Remove-Item -Path "displayVersion.txt"
+          $versionPath = "${{ github.workspace }}\displayVersion.txt"
+          & $exePath --versionFormat "{0}" --versionFile "$versionPath"
+          $version = Get-Content -Path "$versionPath" | Out-String
+          Remove-Item -Path "$versionPath"
           Add-Content -Path $ENV:GITHUB_ENV -Value "displayVersion=$version"
 
       - name: Copy files to artifact directory
