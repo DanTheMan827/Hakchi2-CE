@@ -1,0 +1,88 @@
+name: Build and Release .NET Desktop App
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      solution: 'hakchi_gui.sln'
+      buildPlatform: 'Any CPU'
+      buildConfiguration: 'Debug'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore ${{ env.solution }}
+
+      - name: Prepare GamesDB API Key File
+        run: |
+          New-Item -ItemType Directory -Path "${{ github.workspace }}\hakchi_gui\ApiKeys" -Force
+          New-Item -ItemType File -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Force | Out-Nul
+
+      - name: Write GamesDB API Key File
+        continue-on-error: true
+        run: |
+          Set-Content -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Value $env:GamesDBApiKey
+        env:
+          GamesDBApiKey: ${{ secrets.GamesDBApiKey }}
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Build solution
+        run: msbuild ${{ env.solution }} /p:Configuration=${{ env.buildConfiguration }} /p:Platform=${{ env.buildPlatform }}
+
+      - name: Run Hakchi Version Script
+        run: |
+          $exePath = "${{ github.workspace }}\hakchi_gui\bin\Debug\net461\hakchi.exe"
+          & $exePath --versionFormat "{0}" --versionFile "displayVersion.txt"
+          $version = Get-Content -Path "displayVersion.txt" | Out-String
+          Remove-Item -Path "displayVersion.txt"
+          # Append displayVersion to GITHUB_ENV
+          Add-Content -Path $ENV:GITHUB_ENV -Value "displayVersion=$version"
+
+      - name: Copy files to artifact directory
+        run: |
+          New-Item -ItemType Directory -Path "${{ github.workspace }}\output" -Force
+          Copy-Item -Path "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*" -Destination "${{ github.workspace }}\output" -Force
+          Copy-Item -Path "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*installer.exe" -Destination "${{ github.workspace }}\hakchi_gui\bin\installer" -Force
+
+      - name: Upload Artifacts (Portable)
+        uses: actions/upload-artifact@v2
+        with:
+          name: hakchi2-ce-${{ env.DISPLAY_VERSION }}-portable
+          path: ${{ github.workspace }}\hakchi_gui\bin\Debug\net461\
+
+      - name: Upload Artifacts (Installer)
+        uses: actions/upload-artifact@v2
+        with:
+          name: hakchi2-ce-${{ env.DISPLAY_VERSION }}-installer
+          path: ${{ github.workspace }}\hakchi_gui\bin\installer\
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Hakchi2 CE v${{ env.DISPLAY_VERSION }}
+          draft: true
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
