@@ -62,10 +62,6 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path "${{ github.workspace }}\hakchi_gui\ApiKeys" -Force
           New-Item -ItemType File -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Force
-
-      - name: Write GamesDB API Key File
-        continue-on-error: true
-        run: |
           Set-Content -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Value $env:GamesDBApiKey
         env:
           GamesDBApiKey: ${{ secrets.GamesDBApiKey }}
@@ -83,16 +79,6 @@ jobs:
           Remove-Item -Path $versionPath
           Add-Content -Path $ENV:GITHUB_ENV -Value "displayVersion=$version"
 
-      - name: Copy files to artifact directory
-        run: |
-          New-Item -ItemType Directory -Path "${{ github.workspace }}\output" -Force
-          Copy-Item -Path "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*" -Destination "${{ github.workspace }}\output" -Force
-          $sourcePath = "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*installer.exe"
-          $destinationPath = "${{ github.workspace }}\hakchi_gui\bin\installer"
-          Get-ChildItem -Path $sourcePath | ForEach-Object {
-            Copy-Item -Path $_.FullName -Destination $destinationPath -Force
-          }
-          
       - name: Upload Artifacts (Portable)
         uses: actions/upload-artifact@v4
         with:
@@ -103,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hakchi2-ce-${{ env.displayVersion }}-installer
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-${{ env.displayVersion }}-installer.exe
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
@@ -113,5 +99,8 @@ jobs:
           name: Hakchi2 CE v${{ env.displayVersion }}
           draft: true
           prerelease: false
+          files: |
+            hakchi_gui/bin/hakchi2-ce-${{ env.displayVersion }}-installer.exe
+            hakchi_gui/bin/hakchi2-ce-${{ env.displayVersion }}-portable.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
