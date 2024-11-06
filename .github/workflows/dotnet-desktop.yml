@@ -87,8 +87,12 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path "${{ github.workspace }}\output" -Force
           Copy-Item -Path "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*" -Destination "${{ github.workspace }}\output" -Force
-          Copy-Item -Path "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*installer.exe" -Destination "${{ github.workspace }}\hakchi_gui\bin\installer" -Force
-
+          $sourcePath = "${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-*installer.exe"
+          $destinationPath = "${{ github.workspace }}\hakchi_gui\bin\installer"
+          Get-ChildItem -Path $sourcePath | ForEach-Object {
+            Copy-Item -Path $_.FullName -Destination $destinationPath -Force
+          }
+          
       - name: Upload Artifacts (Portable)
         uses: actions/upload-artifact@v4
         with:
