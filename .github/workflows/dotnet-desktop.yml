@@ -72,8 +72,7 @@ jobs:
         
       - name: Build solution
         run: |
-          $env:MSBUILDEMITSOLUTION = 1
-          msbuild "Installer/Installer.vcxproj" /p:SolutionDir="${{ github.workspace }}\" /p:SolutionPath="${{ github.workspace }}\${{ env.solution }}" "/t:Installer" "/p:Platform=${{ env.buildPlatform }}"
+          msbuild "Installer/Installer.vcxproj" /p:SolutionDir="${{ github.workspace }}\" /p:SolutionPath="${{ github.workspace }}\${{ env.solution }}" "/p:Platform=${{ env.buildPlatform }}"
 
       - name: Run Hakchi Version Script
         run: |
