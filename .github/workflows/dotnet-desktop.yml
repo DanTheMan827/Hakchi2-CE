@@ -103,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hakchi2-ce-${{ env.displayVersion }}-installer
-          path: ${{ github.workspace }}\hakchi_gui\bin\installer\
+          path: ${{ github.workspace }}
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
