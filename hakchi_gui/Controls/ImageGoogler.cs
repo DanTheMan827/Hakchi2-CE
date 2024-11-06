@@ -111,7 +111,10 @@ namespace com.clusterrr.hakchi_gui.Controls
                 foreach (Match match in matches)
                 {
                     // Not sure about it.
-                    urls.Add(HttpUtility.UrlDecode(match.Groups[1].Value.Replace("\\u00", "%")));
+                    if (Uri.IsWellFormedUriString(match.Groups[1].Value, UriKind.Absolute))
+                    {
+                        urls.Add(HttpUtility.UrlDecode(match.Groups[1].Value.Replace("\\u00", "%")));
+                    }
                 }
 
                 if (urls.Count == 0)
