@@ -71,7 +71,7 @@ jobs:
           GamesDBApiKey: ${{ secrets.GamesDBApiKey }}
         
       - name: Build solution
-        run: msbuild "${{ env.solution }}" "/p:Configuration=${{ env.buildConfiguration }}" "/p:Platform=${{ env.buildPlatform }}"
+        run: msbuild "${{ env.solution }}" "/t:Installer" "/p:Platform=${{ env.buildPlatform }}"
 
       - name: Run Hakchi Version Script
         run: |
