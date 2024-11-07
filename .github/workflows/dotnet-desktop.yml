@@ -1,0 +1,112 @@
+name: Build and Release .NET Desktop App
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      solution: 'hakchi_gui.sln'
+      buildPlatform: 'Any CPU'
+      buildConfiguration: 'Debug'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install NSIS
+        uses: repolevedavaj/install-nsis@v1.0.2
+        with:
+          nsis-version: '3.10'
+
+      - name: Install .NET Framework 4.6.1
+        shell: powershell
+        run: |
+          # Download the .NET Framework 4.6.1 installer
+          $url = "https://go.microsoft.com/fwlink/?linkid=2099470"
+          $outputPath = "$env:TEMP\dotnet461-installer.exe"
+          Invoke-WebRequest -Uri "$url" -OutFile "$outputPath"
+          
+          # Install silently
+          Start-Process -FilePath $outputPath -ArgumentList "/quiet", "/norestart" -Wait
+          
+          # Clean up the installer
+          Remove-Item -Path $outputPath
+
+      - name: Set up .NET Core SDK 3.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '3.0.x'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore ${{ env.solution }}
+
+      - name: Prepare GamesDB API Key File
+        run: |
+          New-Item -ItemType Directory -Path "${{ github.workspace }}\hakchi_gui\ApiKeys" -Force
+          New-Item -ItemType File -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Force
+          Set-Content -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Value $env:GamesDBApiKey
+        env:
+          GamesDBApiKey: ${{ secrets.GAMESDB_API_KEY }}
+        
+      - name: Build solution
+        run: |
+          msbuild "Installer/Installer.vcxproj" /p:SolutionDir="${{ github.workspace }}\" /p:SolutionPath="${{ github.workspace }}\${{ env.solution }}" "/p:Platform=${{ env.buildPlatform }}"
+
+      - name: Run Hakchi Version Script
+        run: |
+          $exePath = "${{ github.workspace }}\hakchi_gui\bin\Debug\net461\hakchi.exe"
+          $versionPath = "${{ github.workspace }}\displayVersion.txt"
+          & $exePath --versionFormat "{0}" --versionFile "$versionPath"
+          $version = Get-Content -Path $versionPath | Out-String
+          Remove-Item -Path $versionPath
+          Add-Content -Path $ENV:GITHUB_ENV -Value "displayVersion=$version"
+
+      - name: Upload Artifacts (Portable)
+        uses: actions/upload-artifact@v4
+        with:
+          name: hakchi2-ce-${{ env.displayVersion }}-portable
+          path: ${{ github.workspace }}\hakchi_gui\bin\Debug\net461\
+
+      - name: Upload Artifacts (Installer)
+        uses: actions/upload-artifact@v4
+        with:
+          name: hakchi2-ce-${{ env.displayVersion }}-installer
+          path: ${{ github.workspace }}\hakchi_gui\bin\hakchi2-ce-${{ env.displayVersion }}-installer.exe
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Hakchi2 CE v${{ env.displayVersion }}
+          tag_name: ${{ github.ref_name }}
+          draft: true
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            hakchi_gui/bin/hakchi2-ce-${{ env.displayVersion }}-installer.exe
+            hakchi_gui/bin/hakchi2-ce-${{ env.displayVersion }}-portable.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
