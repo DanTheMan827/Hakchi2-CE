@@ -35,20 +35,6 @@ jobs:
         with:
           nsis-version: '3.10'
 
-      - name: Install .NET Framework 4.6.1
-        shell: powershell
-        run: |
-          # Download the .NET Framework 4.6.1 installer
-          $url = "https://go.microsoft.com/fwlink/?linkid=2099470"
-          $outputPath = "$env:TEMP\dotnet461-installer.exe"
-          Invoke-WebRequest -Uri "$url" -OutFile "$outputPath"
-          
-          # Install silently
-          Start-Process -FilePath $outputPath -ArgumentList "/quiet", "/norestart" -Wait
-          
-          # Clean up the installer
-          Remove-Item -Path $outputPath
-
       - name: Set up .NET Core SDK 3.0
         uses: actions/setup-dotnet@v4
         with:
@@ -70,25 +56,26 @@ jobs:
           Set-Content -Path "${{ github.workspace }}\hakchi_gui\ApiKeys\TheGamesDB.txt" -Value $env:GamesDBApiKey -NoNewLine
         env:
           GamesDBApiKey: ${{ secrets.GAMESDB_API_KEY }}
-        
+
       - name: Build solution
         run: |
           msbuild "Installer/Installer.vcxproj" /p:SolutionDir="${{ github.workspace }}\" /p:SolutionPath="${{ github.workspace }}\${{ env.solution }}" "/p:Platform=${{ env.buildPlatform }}"
 
       - name: Run Hakchi Version Script
         run: |
-          $exePath = "${{ github.workspace }}\hakchi_gui\bin\Debug\net461\hakchi.exe"
+          $exePath = "${{ github.workspace }}\hakchi_gui\bin\Debug\net48\hakchi.exe"
           $versionPath = "${{ github.workspace }}\displayVersion.txt"
-          & $exePath --versionFormat "{0}" --versionFile "$versionPath"
+          Start-Process -FilePath $exePath -ArgumentList @("--versionFormat", "{0}", "--versionFile", $versionPath) -Wait
           $version = Get-Content -Path $versionPath | Out-String
           Remove-Item -Path $versionPath
           Add-Content -Path $ENV:GITHUB_ENV -Value "displayVersion=$version"
+          Write-Output $version
 
       - name: Upload Artifacts (Portable)
         uses: actions/upload-artifact@v4
         with:
           name: hakchi2-ce-${{ env.displayVersion }}-portable
-          path: ${{ github.workspace }}\hakchi_gui\bin\Debug\net461\
+          path: ${{ github.workspace }}\hakchi_gui\bin\Debug\net48\
 
       - name: Upload Artifacts (Installer)
         uses: actions/upload-artifact@v4

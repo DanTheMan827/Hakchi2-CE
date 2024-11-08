@@ -1,3 +1,6 @@
+[submodule "driver/source"]
+	path = driver/source
+	url = https://github.com/TeamShinkansen/libwdi.git
 [submodule "Libraries/SSH.NET"]
 	path = Libraries/SSH.NET
 	url = https://github.com/TeamShinkansen/SSH.NET.git
@@ -7,7 +10,7 @@
 	url = https://github.com/TeamShinkansen/ProgressODoom.git
 [submodule "Libraries/tiny7z"]
 	path = Libraries/tiny7z
-	url = https://github.com/daPhie79/tiny7z.git
+	url = https://github.com/TeamShinkansen/tiny7z.git
 [submodule "Libraries/LibUsbDotNet"]
 	path = Libraries/LibUsbDotNet
 	url = https://github.com/TeamShinkansen/LibUsbDotNet.git

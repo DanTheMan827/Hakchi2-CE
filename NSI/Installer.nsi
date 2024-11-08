@@ -3,12 +3,12 @@
 !include "FileFunc.nsh"
 
 ; Display Version
-!system '..\hakchi_gui\bin\Debug\net461\hakchi.exe --versionFormat "!define DisplayVersion {0}" --versionFile version.nsh'
+!system '..\hakchi_gui\bin\Debug\net48\hakchi.exe --versionFormat "!define DisplayVersion {0}" --versionFile version.nsh'
 !include ".\version.nsh"
 !system 'del version.nsh'
 
 ; Create zip files
-!system '..\Zipper\bin\Release\Zipper.exe ..\hakchi_gui\bin\Debug\net461 ..\hakchi_gui\bin\hakchi2-ce-${DisplayVersion}-portable.zip'
+!system '..\Zipper\bin\Release\Zipper.exe ..\hakchi_gui\bin\Debug\net48 ..\hakchi_gui\bin\hakchi2-ce-${DisplayVersion}-portable.zip'
 
 ; The icon of the installer
 Icon "..\hakchi_gui\icon_app.ico"
@@ -73,7 +73,7 @@ SectionEnd
 Section "Hakchi2 CE ${DisplayVersion} (required)" section_main
   SectionIn RO
   SetOutPath $INSTDIR
-  File /r "..\hakchi_gui\bin\Debug\net461\*"
+  File /r "..\hakchi_gui\bin\Debug\net48\*"
   AccessControl::GrantOnFile "$INSTDIR\" "(BU)" "GenericRead + GenericWrite"
 SectionEnd
 
