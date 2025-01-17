@@ -67,12 +67,12 @@
     <NMakeBuildCommandLine>msbuild.exe "$(SolutionDir)NSI\nsi-helper\nsi-helper.csproj" /p:Configuration=Release
 msbuild.exe "$(SolutionDir)Zipper\Zipper.csproj" /p:Configuration=Release
 
-del /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net461"
-rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net461"
+del /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net48"
+rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net48"
 
 msbuild.exe "$(SolutionPath)" /p:Configuration=Debug /target:hakchi_gui
 
-"$(SolutionDir)NSI\nsi-helper\bin\Release\nsi-helper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net461" "$(SolutionDir)NSI\debug-uninstall.nsh"
+"$(SolutionDir)NSI\nsi-helper\bin\Release\nsi-helper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net48" "$(SolutionDir)NSI\debug-uninstall.nsh"
 
 makensis.exe "$(SolutionDir)NSI\Installer.nsi"
 
@@ -80,12 +80,12 @@ del "$(SolutionDir)NSI\debug-uninstall.nsh"</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>msbuild.exe "$(SolutionDir)NSI\nsi-helper\nsi-helper.csproj" /p:Configuration=Release
 msbuild.exe "$(SolutionDir)Zipper\Zipper.csproj" /p:Configuration=Release
 
-del /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net461"
-rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net461"
+del /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net48"
+rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net48"
 
 msbuild.exe "$(SolutionPath)" /p:Configuration=Debug /target:hakchi_gui
 
-"$(SolutionDir)NSI\nsi-helper\bin\Release\nsi-helper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net461" "$(SolutionDir)NSI\debug-uninstall.nsh"
+"$(SolutionDir)NSI\nsi-helper\bin\Release\nsi-helper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net48" "$(SolutionDir)NSI\debug-uninstall.nsh"
 
 makensis.exe "$(SolutionDir)NSI\Installer.nsi"
 

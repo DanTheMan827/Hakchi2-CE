@@ -59,7 +59,7 @@ namespace com.clusterrr.hakchi_gui.Tasks
 
         public TaskFunc[] Tasks { get; private set; }
 
-        public MembootTasks(MembootTaskType type, string[] hmodsInstall = null, string[] hmodsUninstall = null, string dumpPath = null, bool forceRecoveryReload = false, bool ignoreBackupKernel = false, bool requireSD = false)
+        public MembootTasks(MembootTaskType type, string[] hmodsInstall = null, string[] hmodsUninstall = null, string dumpPath = null, bool forceRecoveryReload = false, bool ignoreBackupKernel = false, bool requireSD = true)
         {
             this.ignoreBackupKernel = ignoreBackupKernel;
             userRecovery = (hakchi.Shell.IsOnline && hakchi.MinimalMemboot && hakchi.UserMinimalMemboot);
@@ -283,7 +283,7 @@ namespace com.clusterrr.hakchi_gui.Tasks
             Tasks = taskList.ToArray();
         }
 
-        private Conclusion WaitForFelOrMembootableShell(Tasker tasker, Object syncObject = null, bool sdRequired = false)
+        private Conclusion WaitForFelOrMembootableShell(Tasker tasker, Object syncObject = null, bool sdRequired = true)
         {
             var hostForm = tasker.GetSpecificViews<Form>().FirstOrDefault();
             if (hostForm == default(Form))

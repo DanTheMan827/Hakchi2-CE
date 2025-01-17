@@ -68,19 +68,19 @@
     <NMakeBuildCommandLine>msbuild.exe "$(SolutionDir)Zipper\Zipper.csproj" /p:Configuration=Release
 
 del /S /Q "$(SolutionDir)hakchi_gui\bin\Debug"
-rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net461"
+rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net48"
 
 msbuild.exe "$(SolutionPath)" /p:Configuration=Debug /target:hakchi_gui
 
-"$(SolutionDir)Zipper\bin\Release\Zipper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net461" "$(SolutionDir)hakchi_gui\bin\hakchi2-ce-debug.zip"</NMakeBuildCommandLine>
+"$(SolutionDir)Zipper\bin\Release\Zipper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net48" "$(SolutionDir)hakchi_gui\bin\hakchi2-ce-debug.zip"</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>msbuild.exe "$(SolutionDir)Zipper\Zipper.csproj" /p:Configuration=Release
 
 del /S /Q "$(SolutionDir)hakchi_gui\bin\Debug"
-rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net461"
+rmdir /S /Q "$(SolutionDir)hakchi_gui\bin\Debug\net48"
 
 msbuild.exe "$(SolutionPath)" /p:Configuration=Debug /target:hakchi_gui
 
-"$(SolutionDir)Zipper\bin\Release\Zipper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net461" "$(SolutionDir)hakchi_gui\bin\hakchi2-ce-debug.zip"</NMakeReBuildCommandLine>
+"$(SolutionDir)Zipper\bin\Release\Zipper.exe" "$(SolutionDir)hakchi_gui\bin\Debug\net48" "$(SolutionDir)hakchi_gui\bin\hakchi2-ce-debug.zip"</NMakeReBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
